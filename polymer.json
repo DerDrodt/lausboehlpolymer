@@ -1,0 +1,20 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/lb-app.html",
+  "fragments": [
+    "src/lb-home.html",
+    "src/lb-aktuelles.html",
+    "src/lb-chronik.html",
+    "src/lb-presse.html",
+    "src/lb-view404.html"
+  ],
+  "sourceGlobs": [
+   "src/**/*",
+   "images/**/*",
+   "bower.json"
+  ],
+  "includeDependencies": [
+    "manifest.json",
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js"
+  ]
+}

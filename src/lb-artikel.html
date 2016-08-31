@@ -1,0 +1,35 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="lb-artikel">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+
+    <div class="card">
+      <h1>[[heading]]</h1>
+      <h2>[[subheading]]</h2>
+      <p>Quelle: <a href$="[[sourcelink]]" target="_blank"><span>[[source]]</span> vom <span>[[date]]</span></a></p>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lb-artikel',
+
+      properties: {
+          heading: String,
+          subheading: String,
+          source: String,
+          sourcelink: String,
+          date: String
+      }
+      
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,308 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<!-- App -->
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+<!-- Iron -->
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+
+<!-- Paper -->
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="my-icons.html">
+
+<link rel="import" href="shared-script.html">
+
+<link rel="import" href="lb-login.html">
+
+<dom-module id="lb-app">
+  <template>
+    <style>
+      :host {
+        --app-primary-color: #4285f4;
+        --app-secondary-color: black;
+
+        display: block;
+      }
+
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
+      }
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+
+      .drawer-list {
+        margin: 0 20px;
+      }
+
+      .drawer-list a {
+        display: block;
+
+        padding: 0 16px;
+
+        text-decoration: none;
+
+        color: var(--app-secondary-color);
+
+        line-height: 40px;
+      }
+
+      .drawer-list a.iron-selected {
+        color: black;
+
+        font-weight: bold;
+      }
+
+      paper-dropdown-menu {
+      width: 200px;
+      margin-right: 20px;
+    }
+
+      .menu-btn {
+        display: none;
+      }
+
+      paper-tab[link] a {
+    /* These mixins (from iron-flex-layout) center the link text. */
+    @apply(--layout-horizontal);
+    @apply(--layout-center-center);
+    color: #fff;
+    text-decoration: none;
+  }
+
+      @media (max-width: 640px){
+        .menu-btn {
+          display: block;
+        }
+      }
+    </style>
+
+    <style is="custom-style">
+      .login {
+        width: 800px;
+        height: 600px;
+        padding: 20px;
+        z-index: 9;
+      }  
+
+      .btn-ok {
+        position: absolute;
+        bottom: 20px;
+        left: calc(50% - 36px);
+        background-color: #4285f4;
+        color: #fff;
+      }
+
+      .closeLogin {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: black;
+      }
+      
+
+      paper-dropdown-menu {
+      width: 200px;
+      margin-right: 20px;
+    }
+    </style>
+
+    <app-location route="{{route}}"></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/:page"
+        data="{{routeData}}"
+        tail="{{subroute}}"></app-route>
+
+      
+  <iron-media-query query="max-width: 640px" query-matches="{{smallScreen}}"></iron-media-query>
+    <app-header-layout>  
+    <app-header role="navigation" condenses fixed effects="waterfall">
+      <!--<app-toolbar style="height:110px">
+        <img src="../images/lb/Logo_2.png" alt="Logo" height="110" width="110">
+      </app-toolbar>-->
+        <app-toolbar sticky$="[[_shouldRenderDrawer]]">
+          <paper-icon-button icon="menu" on-click="_toggleMenuDrawer" class="menu-btn"></paper-icon-button>
+            <div main-title>Bürgerinitiative Lausböhl</div>
+          <paper-icon-button icon="account-circle" on-click="_toggleAccountDrawer"></paper-icon-button>         
+        </app-toolbar>
+        <div id="tabContainer" hidden$="[[!_shouldShowTabs]]" sticky$="[[_shouldShowTabs]]">
+          <template is="dom-if" if="[[_shouldRenderTabs]]">    
+            <paper-tabs selected="[[page]]" attr-for-selected="name">
+              <paper-tab name="home" link><a name="home" href="/home" tabindex="-1">Home</a></paper-tab>
+              <paper-tab name="aktuelles" link><a name="aktuelles" href="/aktuelles" tabindex="-1">Aktuelles</a></paper-tab>
+              <paper-tab name="chronik" link><a name="chronik" href="/chronik" tabindex="-1">Chronik</a></paper-tab>
+              <paper-tab name="presse" link><a name="presse" href="/presse" tabindex="-1">Presse</a></paper-tab>
+              <paper-tab name="leserbriefe"" link><a name="leserbriefe" href="/leserbriefe" tabindex="-1">Leserbriefe</a></paper-tab>
+            </paper-tabs>  
+          </template>
+        </div>
+      </app-header>
+    
+    <template is="dom-if" if="[[_shouldRenderDrawer]]">
+       <app-drawer id="menu" opened="{{MenuDrawerOpened}}" swipe-open tabindex="0">
+         <app-toolbar>Menu</app-toolbar>
+         <iron-selector role="navigation" selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+           <a name="home" href="/home">Home</a>
+           <a name="aktuelles" href="/aktuelles">Aktuelles</a>
+           <a name="chronik" href="/chronik">Chronik</a>
+           <a name="presse" href="/presse">Presse</a>
+           <a name="leserbriefe" href="/leserbriefe">Leserbriefe</a>
+         </iron-selector>
+       </app-drawer>
+    </template>
+    <app-drawer id="account" opened="{{AccountDrawerOpened}}" swipe-open align="end" tabindex="1">
+      <app-toolbar></app-toolbar>
+      <app-toolbar hidden="[[_shouldRenderDrawer]]"></app-toolbar>
+      <app-toolbar>Account</app-toolbar>
+      <paper-button raised on-click="_LogIn">Anmelden</paper-button>
+    </app-drawer>
+
+    <lb-login id="login" openlogin$="{{loginOpened}}"></lb-login>
+
+    </app-header-layout>
+        <iron-pages
+            selected="[[page]]"
+            attr-for-selected="name"
+            fallback-selection="view404"
+            role="main">
+          <lb-home name="home"></lb-home>
+          <lb-aktuelles name="aktuelles"></lb-aktuelles>
+          <lb-chronik name="chronik"></lb-chronik>
+          <lb-presse name="presse"></lb-presse>
+          <lb-leserbriefe name="leserbriefe"></lb-leserbriefe>
+          <lb-signup name="signup"></lb-signup>
+          <lb-view404 name="view404"></lb-view404>
+        </iron-pages>
+        <footer>
+          <app-toolbar>Footer</app-toolbar>
+        </footer>
+  </template>
+
+<script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyBf9v4Y53_HV86CJobbGeK6m9eYVUDcNg8",
+    authDomain: "lausboehl.firebaseapp.com",
+    databaseURL: "https://lausboehl.firebaseio.com",
+    storageBucket: "lausboehl.appspot.com",
+  };
+  firebase.initializeApp(config);
+</script>
+
+  <script>
+    Polymer({
+      is: 'lb-app',
+
+      properties: {
+        page: {
+          type: String,
+          reflectToAttribute: true,
+          observer: '_pageChanged'
+        },
+        lastPage: {
+          type: String
+        },
+        _shouldShowTabs: {
+          type: Boolean,
+          computed: '_computeShouldShowTabs(smallScreen)'
+        },
+        _shouldRenderTabs: {
+          type: Boolean,
+          computed: '_computeShouldRenderTabs(_shouldShowTabs)'
+        },
+        _shouldRenderDrawer: {
+          type: Boolean,
+          computed: '_computeShouldRenderDrawer(smallScreen)'
+        },
+      },
+
+      observers: [
+        '_routePageChanged(routeData.page)'
+      ],
+
+      _routePageChanged: function(page) {
+        this.lastPage = this.page;
+        this.page = page || 'home';
+        this.MenuDrawerOpened = false;
+        this.AccountDrawerOpened = false;
+        this.loginOpened = false;
+      },
+
+      _pageChanged: function(page) {
+        // Load page import on demand. Show 404 page if fails
+        var resolvedPageUrl = this.resolveUrl('lb-' + page + '.html');
+        this.importHref(resolvedPageUrl, null, this._showPage404, true);
+      },
+
+      _showPage404: function() {
+        this.page = 'view404';
+      },
+
+      _toggleMenuDrawer: function() {
+        if(!this.MenuDrawerOpened && this.AccountDrawerOpened){
+          this.AccountDrawerOpened = false;
+        }
+        this.MenuDrawerOpened = !this.MenuDrawerOpened;
+      },
+
+      _toggleAccountDrawer: function() {
+        if(!this.AccountDrawerOpened && this.MenuDrawerOpened){
+          this.MenuDrawerOpened = false;
+        }
+        this.AccountDrawerOpened = !this.AccountDrawerOpened;
+      },
+
+      _LogIn: function() {
+        this.AccountDrawerOpened = false;
+        this.loginOpened = false;
+        this.loginOpened = true;
+      },
+
+      _computeShouldShowTabs: function(smallScreen) {
+        try{
+          return !smallScreen;
+        } catch(err){
+          console.log(err);
+        }
+      },
+      _computeShouldRenderTabs: function(_shouldShowTabs) {
+        try{
+          return _shouldShowTabs;
+        } catch(err){
+          console.log(err);
+        }
+      },
+      _computeShouldRenderDrawer: function(smallScreen) {
+        return smallScreen;
+      }
+
+    });
+  </script>
+</dom-module>

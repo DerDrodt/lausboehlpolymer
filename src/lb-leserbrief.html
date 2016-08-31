@@ -1,0 +1,42 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="lb-leserbrief">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+
+    <div class="card">
+      <h1>[[heading]]</h1>
+      <h2>von [[author]]</h2>
+      <h3>[[reference]]</h3>
+      <div id="content"></div>
+      <p>Quelle: <span>[[source]]</span> vom <span>[[date]]</span></p>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lb-leserbrief',
+
+      properties: {
+          heading: String,
+          author: String,
+          reference: String,
+          content: String,
+          source: String,
+          date: String
+      },
+
+      ready: function(){
+          this.$.content.innerHTML = this.content;
+      }
+      
+    });
+  </script>
+</dom-module>

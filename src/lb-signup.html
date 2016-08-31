@@ -1,0 +1,95 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../bower_components/neon-animation/neon-animation.html">
+<link rel="import" href="../bower_components/gold-email-input/gold-email-input.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="shared-script.html">
+
+<dom-module id="lb-signup">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+
+      .btn-ok {
+        margin-top: 10px;
+        background-color: #4285f4;
+        color: #fff;
+      }
+    </style>
+
+    
+      <h2>Registrieren</h2>
+      <div class="card">
+      <paper-dialog-scrollable>
+        <form is="iron-form" id="signup" method="post" action="/form/handler">
+          <paper-dropdown-menu label="Anrede" required>
+            <paper-listbox class="dropdown-content">
+              <paper-item required>Herr</paper-item>
+              <paper-item required>Frau</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
+          <paper-input label="Vorname"></paper-input>
+          <paper-input label="Nachname"></paper-input>
+          <paper-input label="Nutzername"></paper-input>
+          <gold-email-input label="Email" required auto-validate error-message="Bitte geben Sie eine gültige Email-Addresse ein" id="email"></gold-email-input>
+          
+          <paper-input label="Password" required type="password" id="password"></paper-input>
+          <paper-input label="Password wiederholen" required type="password"></paper-input>
+
+          <paper-button raised class="btn-ok" on-tap="_handleSignUp">
+            <iron-icon icon="check"></iron-icon>OK
+          </paper-button>
+        </form>
+      </paper-dialog-scrollable>
+    </paper-dialog>
+      </div>
+  </template>
+
+
+
+  <script>
+    Polymer({
+      is: 'lb-signup',
+      _handleSignUp: function(){
+          var email = this.$.email.value;
+        var password = this.$.password.value;
+      if (email.length < 4) {
+        alert('Please enter an email address.');
+        return;
+      }
+      if (password.length < 4) {
+        alert('Please enter a password.');
+        return;
+      }
+      // Sign in with email and pass.
+      // [START createwithemail]
+      firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // [START_EXCLUDE]
+        if (errorCode == 'auth/weak-password') {
+          alert('The password is too weak.');
+        } else {
+          alert(errorMessage);
+        }
+        console.log(error);
+        // [END_EXCLUDE]
+      });
+      }   
+    });
+  </script>
+  <script>
+      
+
+    //document.getElementById('quickstart-sign-up').addEventListener('click', handleSignUp, false);
+  </script>
+</dom-module>

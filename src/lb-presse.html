@@ -1,0 +1,30 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="lb-artikel.html">
+
+<dom-module id="lb-presse">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+
+    <lb-artikel
+    heading="Bürgermeister attackiert die SPD"
+    subheading='Sauer bezeichnet Stellungnahme der Sozialdemokraten als „Frechheit“'
+    source="Groß-Gerauer Echo"
+    sourcelink="http://www.echo-online.de/lokales/kreis-gross-gerau/gross-gerau/buergermeister-attackiert-die-spd_17208291.htm"
+    date="19. August 2016">
+
+    </lb-artikel>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lb-presse'
+    });
+  </script>
+</dom-module>

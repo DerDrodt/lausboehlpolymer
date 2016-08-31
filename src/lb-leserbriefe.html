@@ -1,0 +1,83 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="lb-leserbrief.html">
+<link rel="import" href="lb-lbrief-data.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="lb-leserbriefe">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+
+    <lb-leserbrief 
+    heading="Profit ist wichtiger?"
+    author='Karin und Wolfgang Zwer' 
+    reference='Zum Bericht „Ja zur Altmann-Erweiterung“ und zum Kommentar „Aus dem Sack“' 
+    content="<p>Weil es anderswo noch mehr Lärm gibt, soll sich die Bürgerinitiative mal nicht so anstellen? Das bisschen Natur, das kaputt geht – es sind ja nur 1,6 Hektar. Dabei sind SPD, Linke und die Kombi gegen das Vorhaben, selbst in den Reihen der CDU kommen Zweifel auf...</p><p>Um Spitzenauslastungen einer Firma über fünf Jahre abzufedern, werden 1,6 Hektar Land versiegelt und für immer zerstört? 2011 bereits stellte der Ausschuss Regionalentwicklung und Umwelt des Kreises Groß-Gerau fest: „Hinsichtlich der Vermeidbarkeit von Eingriffen in den Naturhaushalt [...] ist zu prüfen, ob der Kfz-Aufstellungsbedarf nicht durch Parkdecks innerhalb der bestehenden Betriebsfläche gedeckt werden kann.“ Doch ein Parkhaus ist der Firma Altmann zu teuer. Der Profit ist wichtiger, als das Wohl der Bürger und der Erhalt der Natur?</p><p>Gott sei Dank, bekommen hier die meisten Stadtverordneten Bedenken! Was ist denn eigentlich mit den Grünen im Stadtparlament? Wir zählen darauf, dass die Stadtverordneten, die ihre Ablehnung zu dem Projekt bereits ausgesprochen haben, zu ihrem Wort stehen.</p>" 
+    source="Groß-Gerauer Echo" 
+    date="12.08.2016">
+    </lb-leserbrief>
+
+    <div id="lbbriefe" hidden></div>
+
+    <template is="dom-repeat" items="[[lbriefe]]" initial-count="3">
+      <lb-leserbrief
+      heading$="[[item.heading]]" 
+      author$="{{item.author}}" 
+      reference$="{{item.reference}}" 
+      content$="{{item.content}}" 
+      source$="{{item.source}}"
+      date$="{{item.date}}"
+      >
+      </lb-leserbrief>
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lb-leserbriefe',
+      properties: {
+        lbriefe: {
+              type: Array,
+              value: function() {return [];},
+              notify: true
+          }
+      },
+
+      ready: function(){
+        const leserbriefRef = firebase.database().ref('leserbriefe');
+        const divList = this.$.lbbriefe;
+            leserbriefRef.on('value', snap => {
+                this.lbriefe = [
+                  {
+                    heading: "Test",
+                    author: "Daniel",
+                    reference: "Kein",
+                    content: "<p>Test Test</p>",
+                    source: "Ich",date: "31. August 2016"
+                  }
+                  ];
+                for(var i=0; i<13; i++){
+                    this.lbriefe[i] = snap.child('l'+i).val();
+                    /*var lbrief = document.createElement('lb-leserbrief');
+                    lbrief.heading = this.lbriefe[i].heading;
+                    lbrief.author = this.lbriefe[i].author;
+                    lbrief.reference = this.lbriefe[i].reference;
+                    lbrief.content = this.lbriefe[i].content;
+                    lbrief.source = this.lbriefe[i].source;
+                    lbrief.date = this.lbriefe[i].date;
+                    console.log(this.lbriefe);
+                    //console.log(lbrief.content);
+                    divList.appendChild(lbrief);*/
+                }
+                console.log(this.lbriefe);
+            });
+      }
+    });
+  </script>
+</dom-module>
