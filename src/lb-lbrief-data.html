@@ -32,7 +32,7 @@
       ready: function(){
             const leserbriefRef = firebase.database().ref('leserbriefe');
             var lbriefList = [];
-            leserbriefRef.on('value', snap => {
+            leserbriefRef.on('value', function(snap){
                 for(var i=0; i<13; i++){
                     lbriefList[i] = snap.child('l'+i).val();
                     //console.log(lbriefList[i]);

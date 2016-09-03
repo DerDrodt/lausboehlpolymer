@@ -1,0 +1,135 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../bower_components/neon-animation/neon-animation.html">
+<link rel="import" href="../bower_components/gold-email-input/gold-email-input.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="shared-script.html">
+
+<dom-module id="lb-add">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+
+      .btn-ok {
+        margin-top: 10px;
+        background-color: #4285f4;
+        color: #fff;
+      }
+    </style>
+
+    
+      <h2>Inhalt hinzufügen</h2>
+      <div class="card">
+      <paper-dialog-scrollable>
+        <form is="iron-form" id="categories" method="post" action="_add">
+          <paper-dropdown-menu label="Kategorie" required on-iron-select="_itemSelected">
+            <paper-listbox class="dropdown-content">
+              <paper-item>Leserbrief</paper-item>
+              <paper-item>Artikel</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
+          <paper-input label="Überschrift" id="heading"></paper-input>
+          <paper-input label="Unterüberschrift" required$="[[_showArtikel]]" hidden$="[[!_showArtikel]]" id="subheading"></paper-input>
+          <paper-input label="Author" required$="[[_showLeserBrief]]" hidden$="[[!_showLeserBrief]]" id="author"></paper-input>
+          <paper-input label="Zu Artikel" required$="[[_showLeserBrief]]" hidden$="[[!_showLeserBrief]]" id="reference"></paper-input>
+          <paper-textarea label="Inhalt" required$="[[_showLeserBrief]]" hidden$="[[!_showLeserBrief]]" id="content"></paper-textarea>
+          <paper-input label="Quelle" required id="source"></paper-input>
+          <paper-input label="Link" required$="[[_showArtikel]]" hidden$="[[!_showArtikel]]" id="sourcelink"></paper-input>
+          <paper-input label="Datum" required id="date"></paper-input>
+          <paper-button raised class="btn-ok" on-tap="_add">
+            <iron-icon icon="check"></iron-icon>OK
+          </paper-button>
+        </form>
+      </paper-dialog-scrollable>
+    </paper-dialog>
+      </div>
+  </template>
+
+
+
+  <script>
+    Polymer({
+      is: 'lb-add',
+      properties:{
+          category: String,
+          _showLeserBrief: {
+              type: Boolean,
+              value: false
+          },
+          _showArtikel: {
+              type: Boolean,
+              value: false
+          }
+      },
+
+      _itemSelected: function(e){
+          var selectedItem = e.target.selectedItem;
+          if (selectedItem) {
+              if(selectedItem.innerText == "Leserbrief"){
+                  this._showLeserBrief = true;
+                  this._showArtikel = false;
+              } else if(selectedItem.innerText == "Artikel"){
+                  this._showArtikel = true;
+                  this._showLeserBrief = false;
+              }
+            }
+      },
+
+      _add: function(){
+        var formHeading = this.$.heading.value;
+        var formSource = this.$.source.value;
+        var formDate = this.$.date.value;
+        if(this._showLeserBrief){
+          var formAuthor = this.$.author.value;
+          var formReference = this.$.reference.value;
+          var formContent = this.$.content.value;
+          if(formHeading.length > 3 && formSource.length > 3 && formDate.length > 3 && formAuthor.length > 3 && formReference.length > 3 && formContent.length > 3){
+            var num = 0;
+            const DBRefNum = firebase.database().ref('leserbriefe/numLeserbriefe');
+            DBRefNum.once('value').then(function(snap){
+              num = snap.val();
+              const DBRefAdd = firebase.database().ref('leserbriefe/l' + num);
+              DBRefAdd.set({
+                heading: formHeading,
+                author: formAuthor,
+                reference: formReference,
+                source: formSource,
+                date: formDate,
+                content: formContent
+              });
+              DBRefNum.set(num + 1);
+            });
+
+          }
+        } else if(this._showArtikel){
+          var formSubheading = this.$.subheading.value;
+          var formSourcelink = this.$.sourcelink.value;
+
+          const DBRefNum = firebase.database().ref('artikel/numArtikel');
+          DBRefNum.once('value').then(function(snap){
+              num = snap.val();
+              const DBRefAdd = firebase.database().ref('artikel/a' + num);
+              DBRefAdd.set({
+                heading: formHeading,
+                subheading: formSubheading,
+                source: formSource,
+                date: formDate,
+                sourcelink: formSourcelink
+              });
+              DBRefNum.set(num + 1);
+            });
+        }
+      }
+      
+    });
+  </script>
+</dom-module>

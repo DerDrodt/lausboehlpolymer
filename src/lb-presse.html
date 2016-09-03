@@ -1,4 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="lb-artikel.html">
 
@@ -11,20 +12,36 @@
         padding: 10px;
       }
     </style>
+    <style is="custom-style">
+      paper-fab {
+        --paper-fab-background: var(--paper-light-blue-500);
+        --paper-fab-keyboard-focus-background: var(--paper-light-blue-900);
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+      }
+    </style>
 
-    <lb-artikel
-    heading="Bürgermeister attackiert die SPD"
-    subheading='Sauer bezeichnet Stellungnahme der Sozialdemokraten als „Frechheit“'
-    source="Groß-Gerauer Echo"
-    sourcelink="http://www.echo-online.de/lokales/kreis-gross-gerau/gross-gerau/buergermeister-attackiert-die-spd_17208291.htm"
-    date="19. August 2016">
-
-    </lb-artikel>
+    <template is="dom-repeat" items="[[artikel]]" initial-count="3">
+      <lb-artikel artikel="{{item}}"></lb-artikel>
+    </template>
+    <a href="/add"><paper-fab icon="add"></paper-fab></a>
   </template>
 
   <script>
     Polymer({
-      is: 'lb-presse'
+      is: 'lb-presse',
+
+      ready: function(){
+        var artikelRef = firebase.database().ref('artikel');
+            artikelRef.on('value', function(snap) {
+              var n = snap.child('numArtikel').val();
+              this.artikel = [];
+              for(var i=0; i<n; i++){
+                    this.push('artikel', snap.child('a'+(n - 1 - i)).val());
+                }
+            });
+      }
     });
   </script>
 </dom-module>

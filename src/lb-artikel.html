@@ -12,9 +12,9 @@
     </style>
 
     <div class="card">
-      <h1>[[heading]]</h1>
-      <h2>[[subheading]]</h2>
-      <p>Quelle: <a href$="[[sourcelink]]" target="_blank"><span>[[source]]</span> vom <span>[[date]]</span></a></p>
+      <h1>[[artikel.heading]]</h1>
+      <h2>[[artikel.subheading]]</h2>
+      <p>Quelle: <a href$="[[artikel.sourcelink]]" target="_blank"><span>[[artikel.source]]</span> vom <span>[[artikel.date]]</span></a></p>
     </div>
   </template>
 
@@ -23,11 +23,7 @@
       is: 'lb-artikel',
 
       properties: {
-          heading: String,
-          subheading: String,
-          source: String,
-          sourcelink: String,
-          date: String
+          artikel: Object
       }
       
     });
