@@ -1,7 +1,6 @@
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="lb-leserbrief.html">
-<link rel="import" href="lb-lbrief-data.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="lb-leserbriefe">
@@ -15,8 +14,8 @@
     </style>
     <style is="custom-style">
       paper-fab {
-        --paper-fab-background: var(--paper-light-blue-500);
-        --paper-fab-keyboard-focus-background: var(--paper-light-blue-900);
+        --paper-fab-background: var(--paper-amber-500);
+        --paper-fab-keyboard-focus-background: var(--paper-amber-900);
         position: fixed;
         bottom: 30px;
         right: 30px;
@@ -32,22 +31,19 @@
   <script>
     Polymer({
       is: 'lb-leserbriefe',
+      properties:{
+        lbriefe: Array
+      },
 
       ready: function(){
-        console.log("ready");
         var leserbriefRef = firebase.database().ref('leserbriefe');
             leserbriefRef.on('value', function(snap) {
-              console.log("getting");
               var n = snap.child('numLeserbriefe').val();
-              console.log(n);
               this.lbriefe = [];
               for(var i=0; i<n; i++){
-                    //this.lbriefe[i] = snap.child('l'+i).val();
                     this.push("lbriefe", snap.child('l'+(n - 1 - i)).val());
-                    //this.lbriefe[i] = snap.child('l'+(n - 1 - i)).val();
                 }
-                console.log(this.lbriefe);
-            });
+            }.bind(this));
       }
     });
   </script>

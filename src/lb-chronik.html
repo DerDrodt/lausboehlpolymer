@@ -10,6 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="shared-styles.html">
+<link rel="import" href="lb-chronik-li.html">
 
 <dom-module id="lb-chronik">
   <template>
@@ -22,16 +23,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <div class="card">
-      <div class="circle">3</div>
-      <h1>View Three</h1>
-      <p>Modus commodo minimum eum te, vero utinam assueverit per eu.</p>
-      <p>Ea duis bonorum nec, falli paulo aliquid ei eum.Has at minim mucius aliquam, est id tempor laoreet.Pro saepe pertinax ei, ad pri animal labores suscipiantur.</p>
+      <h1>2016</h1>
+      <template is="dom-repeat" items="[[j16]]" initial-count="3">
+        <lb-chronik-li data="[[item]]"></lb-chronik-li>
+      </template>
+    </div>
+
+    <div class="card">
+      <h1>2010</h1>
+      <template is="dom-repeat" items="[[j10]]" initial-count="3">
+        <lb-chronik-li data="[[item]]"></lb-chronik-li>
+      </template>
     </div>
   </template>
-
   <script>
     Polymer({
-      is: 'lb-chronik'
+      is: 'lb-chronik',
+      properties: {
+        j16: Array,
+        j10: Array
+      },
+
+      ready: function(){
+        var j16Ref = firebase.database().ref('chronik/2016');
+            j16Ref.on('value', function(snap) {
+              var n = Object.keys(snap.val()).length;
+              this.j16 = [];
+              for(var i=0; i<n; i++){
+                    this.push("j16", snap.child('c'+(n - 1 - i)).val());
+                }
+            }.bind(this));
+
+        var j10Ref = firebase.database().ref('chronik/2010');
+            j10Ref.on('value', function(snap) {
+              var n = Object.keys(snap.val()).length;
+              this.j10 = [];
+              for(var i=0; i<n; i++){
+                    this.push("j10", snap.child('c'+(n - 1 - i)).val());
+                }
+            }.bind(this));
+      }
     });
   </script>
 </dom-module>
