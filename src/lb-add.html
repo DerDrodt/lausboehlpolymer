@@ -68,8 +68,12 @@
           _showArtikel: {
               type: Boolean,
               value: false
+          },
+          visible: {
+            type: Boolean,
+            observer: '_visibleChanged'
           }
-      },
+        },
 
       _itemSelected: function(e){
           var selectedItem = e.target.selectedItem;
@@ -127,6 +131,11 @@
               });
               DBRefNum.set(num + 1);
             });
+        }
+      },
+      _visibleChanged: function(visible) {
+        if (visible) {
+          this.fire('change-section', { title: 'Artikel hinzufügen' });
         }
       }
       

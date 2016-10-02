@@ -32,18 +32,27 @@
     Polymer({
       is: 'lb-leserbriefe',
       properties:{
-        lbriefe: Array
+        lbriefe: Array,
+        visible: {
+          type: Boolean,
+          observer: '_visibleChanged'
+        }
       },
 
-      ready: function(){
-        var leserbriefRef = firebase.database().ref('leserbriefe');
-            leserbriefRef.on('value', function(snap) {
-              var n = snap.child('numLeserbriefe').val();
-              this.lbriefe = [];
-              for(var i=0; i<n; i++){
-                    this.push("lbriefe", snap.child('l'+(n - 1 - i)).val());
-                }
-            }.bind(this));
+      ready(){
+        const leserbriefRef = firebase.database().ref('leserbriefe');
+        leserbriefRef.on('value', snap => {
+          const n = snap.child('numLeserbriefe').val();
+          this.lbriefe = [];
+          for(var i=0; i<n; i++){
+            this.push("lbriefe", snap.child('l'+(n - 1 - i)).val());
+          }
+        });
+      },
+      _visibleChanged: function(visible) {
+        if (visible) {
+          this.fire('change-section', { title: 'Leserbriefe' });
+        }
       }
     });
   </script>

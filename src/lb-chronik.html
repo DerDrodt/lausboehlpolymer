@@ -41,7 +41,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'lb-chronik',
       properties: {
         j16: Array,
-        j10: Array
+        j10: Array,
+        visible: {
+          type: Boolean,
+          observer: '_visibleChanged'
+        }
       },
 
       ready: function(){
@@ -62,6 +66,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     this.push("j10", snap.child('c'+(n - 1 - i)).val());
                 }
             }.bind(this));
+      },
+      _visibleChanged: function(visible) {
+        if (visible) {
+          this.fire('change-section', { title: 'Chronik' });
+        }
       }
     });
   </script>

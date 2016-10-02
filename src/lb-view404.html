@@ -25,7 +25,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <script>
     Polymer({
-      is: 'lb-view404'
+      is: 'lb-view404',
+      properties: {
+        visible: {
+          type: Boolean,
+          observer: '_visibleChanged'
+        }
+      }
+      _visibleChanged: function(visible) {
+        if (visible) {
+          this.fire('change-section', { title: '404' });
+        }
+      }
     });
   </script>
 </dom-module>

@@ -31,7 +31,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <script>
     Polymer({
-      is: 'lb-aktuelles'
+      is: 'lb-aktuelles',
+      properties:{
+        visible: {
+          type: Boolean,
+          observer: '_visibleChanged'
+        }
+      },
+      _visibleChanged: function(visible) {
+        if (visible) {
+          this.fire('change-section', { title: 'Aktuelles' });
+        }
+      }
     });
   </script>
 </dom-module>

@@ -32,18 +32,27 @@
     Polymer({
       is: 'lb-presse',
       properties:{
-        artikel: Array
+        artikel: Array,
+        visible: {
+          type: Boolean,
+          observer: '_visibleChanged'
+        }
       },
 
       ready: function(){
-        var artikelRef = firebase.database().ref('artikel');
-            artikelRef.on('value', function(snap) {
-              var n = snap.child('numArtikel').val();
-              this.artikel = [];
-              for(var i=0; i<n; i++){
-                    this.push('artikel', snap.child('a'+(n - 1 - i)).val());
-                }
-            }.bind(this));
+        var artikelRef = firebase.database().ref('artikel');     
+        artikelRef.on('value', snap => {
+          var n = snap.child('numArtikel').val();
+          this.artikel = [];
+          for(var i=0; i<n; i++){
+            this.push('artikel', snap.child('a'+(n - 1 - i)).val());
+          }
+        });
+      },
+      _visibleChanged: function(visible) {
+        if (visible) {
+          this.fire('change-section', { title: 'Presseartikel' });
+        }
       }
     });
   </script>

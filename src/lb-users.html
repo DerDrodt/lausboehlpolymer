@@ -10,13 +10,21 @@
         padding: 10px;
       }
     </style>
+    <app-location route="{{route}}"></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/:page"
+        data="{{routeData}}"
+        tail="{{subroute}}"></app-route>
+    <app-route
+        route="{{subroute}}"
+        pattern="/:username"
+        data="{{subrouteData}}"></app-route>
 
     <div class="card">
-      <h1>[[leserbrief.heading]]</h1>
-      <h2>von [[leserbrief.author]]</h2>
-      <h3>[[leserbrief.reference]]</h3>
-      <div id="content"></div>
-      <p>Quelle: <span>[[leserbrief.source]]</span> vom <span>[[leserbrief.date]]</span></p>
+      <h1>[[userDB.username]]</h1>
+      <p>[[userDB.email]]</p>
+      <p><span>[[userDB.vorname]]</span> <span>[[userDB.nachname]]</span>, <span>[[userDB.geschlecht]]</span></p>
     </div>
   </template>
 
@@ -25,7 +33,30 @@
       is: 'lb-users',
 
       properties: {
-          leserbrief: Object
+          user: {
+            type: String,
+            reflectToAttribute: true,
+            observer: '_userChanged'
+          },
+          userDB: Object,
+          visible: {
+          type: Boolean,
+          observer: '_visibleChanged'
+        }
+      },
+      ready: function(){
+        this.user = this.subrouteData.username;
+      },
+      _userChanged: function(){
+        var usersRef = firebase.database().ref('users');
+            usersRef.on('value', function(snap) {
+              this.userDB = snap.child(this.user).val();
+            }.bind(this));
+      },
+      _visibleChanged: function(visible) {
+        if (visible) {
+          this.fire('change-section', { title: this.user });
+        }
       }
       
     });

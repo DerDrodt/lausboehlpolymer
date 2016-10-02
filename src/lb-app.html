@@ -30,10 +30,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
-<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="my-icons.html">
 
+<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
 
 <link rel="import" href="lb-login.html">
 
@@ -183,17 +183,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <app-route
         route="{{route}}"
         pattern="/:page"
-        data="{{routeData}}"
-        tail="{{subroute}}"></app-route>
-    <app-rote
-      route="{{subroute}}"
-      pattern="/:id"
-      data="{{subrouteData}}"></app-rote>
-
+        data="{{routeData}}"></app-route>
       
   <iron-media-query query="max-width: 640px" query-matches="{{smallScreen}}"></iron-media-query>
-    <app-header-layout>  
-    <app-header role="navigation" id="header" condenses fixed effects="waterfall">
+    <app-header-layout>
+      <app-header role="navigation" id="header" condenses fixed effects="waterfall">
         <app-toolbar>
           <iron-icon id="logo" icon="lb-logo"></iron-icon>
           <div main-title>Bürgerinitiative Lausböhl</div>
@@ -215,44 +209,44 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </template>
         </div>
       </app-header>
-    <lb-login id="login" openlogin$="{{loginOpened}}"></lb-login>
-
-    </app-header-layout>
-
-    <template is="dom-if" if="[[_shouldRenderDrawer]]">
-       <app-drawer id="menu" opened="{{MenuDrawerOpened}}" swipe-open tabindex="0">
-         <app-toolbar>Menu</app-toolbar>
-         <iron-selector role="navigation" selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-           <a name="home" href="/home">Home</a>
-           <a name="aktuelles" href="/aktuelles">Aktuelles</a>
-           <a name="chronik" href="/chronik">Chronik</a>
-           <a name="presse" href="/presse">Presseartikel</a>
-           <a name="leserbriefe" href="/leserbriefe">Leserbriefe</a>
-         </iron-selector>
-       </app-drawer>
+      <lb-login id="login" openlogin$="{{loginOpened}}"></lb-login>
+      </app-header-layout>
+      <template is="dom-if" if="[[_shouldRenderDrawer]]">
+        <app-drawer id="menu" opened="{{MenuDrawerOpened}}" swipe-open tabindex="0">
+          <app-toolbar>Menu</app-toolbar>
+          <iron-selector role="navigation" selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+            <a name="home" href="/home">Home</a>
+            <a name="aktuelles" href="/aktuelles">Aktuelles</a>
+            <a name="chronik" href="/chronik">Chronik</a>
+            <a name="presse" href="/presse">Presseartikel</a>
+            <a name="leserbriefe" href="/leserbriefe">Leserbriefe</a>
+          </iron-selector>
+        </app-drawer>
+      </template>
+      <app-drawer id="account" opened="{{AccountDrawerOpened}}" swipe-open align="end" tabindex="1">
+        <app-toolbar>Account</app-toolbar>
+        <app-toolbar>[[currentUser.username]]</app-toolbar>
+        <paper-button class="account-btn" raised on-click="_LogIn">Anmelden</paper-button>
+      </app-drawer>
+      <iron-pages
+        selected="[[page]]"
+        attr-for-selected="name"
+        fallback-selection="view404"
+        selected-attribute="visible"
+        role="main">
+        <lb-home name="home"></lb-home>
+        <lb-aktuelles name="aktuelles"></lb-aktuelles>
+        <lb-chronik name="chronik"></lb-chronik>
+        <lb-presse name="presse"></lb-presse>
+        <lb-leserbriefe name="leserbriefe"></lb-leserbriefe>
+        <lb-signup name="signup"></lb-signup>
+        <lb-add name="add"></lb-add>
+        <lb-users name="users"></lb-users>
+        <lb-view404 name="view404"></lb-view404>
+      </iron-pages>
     </template>
-    <app-drawer id="account" opened="{{AccountDrawerOpened}}" swipe-open align="end" tabindex="1">
-      <app-toolbar>Account</app-toolbar>
-      <paper-button class="account-btn" raised on-click="_LogIn">Anmelden</paper-button>
-    </app-drawer>
-        <iron-pages
-            selected="[[page]]"
-            attr-for-selected="name"
-            fallback-selection="view404"
-            role="main">
-          <lb-home name="home"></lb-home>
-          <lb-aktuelles name="aktuelles"></lb-aktuelles>
-          <lb-chronik name="chronik"></lb-chronik>
-          <lb-presse name="presse"></lb-presse>
-          <lb-leserbriefe name="leserbriefe"></lb-leserbriefe>
-          <lb-signup name="signup"></lb-signup>
-          <lb-add name="add"></lb-add>
-          <lb-view404 name="view404"></lb-view404>
-        </iron-pages>
-        
-  </template>
 
-<script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
 <script>
   // Initialize Firebase
   var config = {
@@ -260,6 +254,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     authDomain: "lausboehl.firebaseapp.com",
     databaseURL: "https://lausboehl.firebaseio.com",
     storageBucket: "lausboehl.appspot.com",
+    messagingSenderId: "832155919369"
   };
   firebase.initializeApp(config);
 </script>
@@ -274,6 +269,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           reflectToAttribute: true,
           observer: '_pageChanged'
         },
+
         lastPage: {
           type: String
         },
@@ -288,12 +284,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         _shouldRenderDrawer: {
           type: Boolean,
           computed: '_computeShouldRenderDrawer(smallScreen)'
+        },
+        signedIn :{
+          type: Boolean,
+          computed: '_computeSignedIn()'
+        },
+        currentUser:{
+          type: Object,
+          computed: '_coumputeCurrentUser(signedIn)'
         }
+      },
+
+      listeners: {
+        'change-section': '_onChangeSection'
       },
 
       observers: [
         '_routePageChanged(routeData.page)'
       ],
+
+      ready(){
+        var FBUser = firebase.auth().currentUser;
+        if(FBUser){
+          this.signedIn = true;
+          console.log(signedIn);
+          firebase.database().ref().on('value', snap => {
+            var uName = snap.child('usersById').child(FBUser);
+            console.log(snap.child('users').uName);
+            return snap.child('users').uName;
+          });    
+        }
+      },
 
       _routePageChanged: function(page) {
         this.lastPage = this.page;
@@ -311,6 +332,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _showPage404: function() {
         this.page = 'view404';
+      },
+
+      _onChangeSection: function(event) {
+        var detail = event.detail;
+        if (detail.title) {
+          document.title = detail.title + ' - Lausböhl';
+        }
       },
 
       _toggleMenuDrawer: function() {
@@ -349,6 +377,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
       _computeShouldRenderDrawer: function(smallScreen) {
         return smallScreen;
+      },
+
+      _computeSignedIn: function(){
+        console.log("computing");
+        if(firebase.auth().currentUser){
+          console.log(true);
+          return true;
+        } else {
+          console.log(false);
+          return false;
+        }
+      },
+      _coumputeCurrentUser: function(signedIn){
+        if(signedIn){
+          var FBUser = firebase.auth().currentUser;
+          firebase.database().ref().on('value', snap => {
+            var uName = snap.child('users_by_uid').child(FBUser);
+            return snap.child('users').uName;
+          });          
+        } else {
+          console.log("not signed in");
+        }
       }
 
     });

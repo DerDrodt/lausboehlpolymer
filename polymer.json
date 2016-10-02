@@ -2,10 +2,19 @@
   "entrypoint": "index.html",
   "shell": "src/lb-app.html",
   "fragments": [
+    "src/lb-add.html",
     "src/lb-home.html",
     "src/lb-aktuelles.html",
     "src/lb-chronik.html",
     "src/lb-presse.html",
+    "src/lb-artikel.html",
+    "src/lb-chronik-li.html",
+    "src/lb-leserbrief.html",
+    "src/lb-leserbriefe.html",
+    "src/lb-login.html",
+    "src/lb-signup.html",
+    "src/lb-users.html",
+    "src/my-icons.html",
     "src/lb-view404.html"
   ],
   "sourceGlobs": [
